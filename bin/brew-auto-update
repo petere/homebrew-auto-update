@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -eu
+set -o pipefail
+
+PATH=/usr/local/bin:$PATH
+
+if ! out=$(brew update 2>&1); then
+	terminal-notifier \
+		-sound 'default' \
+		-title 'Homebrew' \
+		-subtitle 'update failed' \
+		-message "$out" \
+		-activate com.apple.Terminal \
+		>/dev/null
+	exit 1
+fi
+
+if printf "%s" "$out" | grep 'Already up-to-date.'; then
+	updated=false
+else
+	updated=true
+fi
+
+outdated=$(brew outdated)
+
+if $updated && [ -n "$outdated" ]; then
+	terminal-notifier \
+		-group 'org.eisentraut.BrewAutoUpdate' \
+		-sound 'default' \
+		-title 'Homebrew' \
+		-subtitle 'package updates' \
+		-message "$outdated" \
+		-activate com.apple.Terminal \
+		>/dev/null
+elif [ -z "$outdated" ]; then
+	terminal-notifier -remove 'org.eisentraut.BrewAutoUpdate' >/dev/null
+fi
