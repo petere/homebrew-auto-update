@@ -22,7 +22,7 @@ else
 	updated=true
 fi
 
-outdated=$(brew outdated)
+outdated=$(brew outdated | tr '\n' ' ' | sed 's/ $//')
 
 if $updated && [ -n "$outdated" ]; then
 	terminal-notifier \
