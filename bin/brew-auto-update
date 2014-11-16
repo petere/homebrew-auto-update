@@ -8,7 +8,7 @@ PATH=/usr/local/bin:$PATH
 if ! out=$(brew update 2>&1); then
 	terminal-notifier \
 		-group 'org.eisentraut.BrewAutoUpdate' \
-		-sound 'default' \
+		-sound 'Glass' \
 		-title 'Homebrew' \
 		-subtitle 'update failed' \
 		-message "$out" \
@@ -28,7 +28,7 @@ outdated=$(brew outdated | tr '\n' ' ' | sed 's/ $//')
 if $updated && [ -n "$outdated" ]; then
 	terminal-notifier \
 		-group 'org.eisentraut.BrewAutoUpdate' \
-		-sound 'default' \
+		-sound 'Bottle' \
 		-title 'Homebrew' \
 		-subtitle 'package updates' \
 		-message "$outdated" \
