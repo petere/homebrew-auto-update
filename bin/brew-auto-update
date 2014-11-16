@@ -5,6 +5,10 @@ set -o pipefail
 
 PATH=/usr/local/bin:$PATH
 
+if [ "$(scutil -r github.com)" != 'Reachable' ]; then
+	exit
+fi
+
 if ! out=$(brew update 2>&1); then
 	terminal-notifier \
 		-group 'org.eisentraut.BrewAutoUpdate' \
