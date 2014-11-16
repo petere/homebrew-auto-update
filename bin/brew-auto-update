@@ -9,6 +9,12 @@ if [ "$(scutil -r github.com)" != 'Reachable' ]; then
 	exit
 fi
 
+for termapp in iTerm Terminal; do
+	if termapp_id=$(osascript -e "id of app \"$termapp\"" 2>/dev/null) && [ -n "$termapp_id" ]; then
+		break
+	fi
+done
+
 if ! out=$(brew update 2>&1); then
 	terminal-notifier \
 		-group 'org.eisentraut.BrewAutoUpdate' \
@@ -16,7 +22,7 @@ if ! out=$(brew update 2>&1); then
 		-title 'Homebrew' \
 		-subtitle 'update failed' \
 		-message "$out" \
-		-activate com.apple.Terminal \
+		-activate "$termapp_id" \
 		>/dev/null
 	exit 1
 fi
@@ -36,7 +42,7 @@ if $updated && [ -n "$outdated" ]; then
 		-title 'Homebrew' \
 		-subtitle 'package updates' \
 		-message "$outdated" \
-		-activate com.apple.Terminal \
+		-activate "$termapp_id" \
 		>/dev/null
 elif [ -z "$outdated" ]; then
 	terminal-notifier -remove 'org.eisentraut.BrewAutoUpdate' >/dev/null
