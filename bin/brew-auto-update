@@ -5,6 +5,20 @@ set -o pipefail
 
 PATH=/usr/local/bin:$PATH
 
+# Check OS X system settings.  Note that the Homebrew terminology is
+# different from OS X:
+#
+# Homebrew: update -> fetch -> upgrade
+# OS X: check -> download -> update
+#
+auto_update=$(defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled)
+auto_fetch=$(defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload)
+auto_upgrade=$(defaults read /Library/Preferences/com.apple.commerce AutoUpdate)
+
+if [ "$auto_update" != 1 ]; then
+	exit
+fi
+
 if [ "$(scutil -r github.com)" != 'Reachable' ]; then
 	exit
 fi
@@ -36,6 +50,9 @@ fi
 outdated=$(brew outdated | tr '\n' ' ' | sed 's/ $//')
 
 if $updated && [ -n "$outdated" ]; then
+	if [ "$auto_fetch" = 1 ]; then
+		brew fetch $outdated || :
+	fi
 	terminal-notifier \
 		-group 'org.eisentraut.BrewAutoUpdate' \
 		-sound 'Bottle' \
