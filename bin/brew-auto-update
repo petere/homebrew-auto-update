@@ -48,6 +48,7 @@ else
 fi
 
 outdated=$(brew outdated | tr '\n' ' ' | sed 's/ $//')
+notifications=$(terminal-notifier -list org.eisentraut.BrewAutoUpdate)
 
 if $updated && [ -n "$outdated" ]; then
 	if [ "$auto_fetch" = 1 ]; then
@@ -61,6 +62,6 @@ if $updated && [ -n "$outdated" ]; then
 		-message "$outdated" \
 		-activate "$termapp_id" \
 		>/dev/null
-elif [ -z "$outdated" ]; then
+elif [ -z "$outdated" ] && [ -n "$notifications" ]; then
 	terminal-notifier -remove 'org.eisentraut.BrewAutoUpdate' >/dev/null
 fi
