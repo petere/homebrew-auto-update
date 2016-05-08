@@ -12,10 +12,8 @@ and then follow the instructions that are printed:
 
 ```
 ==> Caveats
-To have launchd start brew-auto-update at login:
-    ln -sfv /usr/local/opt/brew-auto-update/*.plist ~/Library/LaunchAgents
-Then to load brew-auto-update now:
-    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.brew-auto-update.plist
+To have launchd start petere/auto-update/brew-auto-update now and restart at login:
+  brew services start petere/auto-update/brew-auto-update
 ```
 
 The App Store preferences for checking for updates are respected, so
