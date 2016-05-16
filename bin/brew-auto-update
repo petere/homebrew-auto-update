@@ -11,9 +11,9 @@ PATH=/usr/local/bin:$PATH
 # Homebrew: update -> fetch -> upgrade
 # OS X: check -> download -> update
 #
-auto_update=$(defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled)
-auto_fetch=$(defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload)
-auto_upgrade=$(defaults read /Library/Preferences/com.apple.commerce AutoUpdate)
+auto_update=${HOMEBREW_AUTO_UPDATE:-$(defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticCheckEnabled)}
+auto_fetch=${HOMEBREW_AUTO_FETCH:-$(defaults read /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload)}
+auto_upgrade=${HOMEBREW_AUTO_UPGRADE:-$(defaults read /Library/Preferences/com.apple.commerce AutoUpdate)}
 
 if [ "$auto_update" != 1 ]; then
 	exit
@@ -48,19 +48,21 @@ else
 fi
 
 outdated=$(brew outdated | tr '\n' ' ' | sed 's/ $//')
+if [ -n "$outdated" ]; then
 
-if $updated && [ -n "$outdated" ]; then
 	if [ "$auto_fetch" = 1 ]; then
 		brew fetch $outdated || :
 	fi
+
 	terminal-notifier \
 		-group 'org.eisentraut.BrewAutoUpdate' \
 		-sound 'Bottle' \
 		-title 'Homebrew' \
-		-subtitle 'package updates' \
+		-subtitle 'Package updates available' \
 		-message "$outdated" \
 		-activate "$termapp_id" \
 		>/dev/null
-elif [ -z "$outdated" ]; then
+
+else
 	terminal-notifier -remove 'org.eisentraut.BrewAutoUpdate' >/dev/null
 fi
